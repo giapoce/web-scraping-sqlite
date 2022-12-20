@@ -13,7 +13,7 @@ csv_files_glob = r"csv-output\*csv"
 database = r"sqlite\db\pythonsqlite.db"
 
 sql_lite_table = """ CREATE TABLE IF NOT EXISTS procedura_lotto (
-                                       id integer PRIMARY KEY,
+                                       id integer PRIMARY KEY AUTOINCREMENT,
                                        lotto text NOT NULL,
                                        tipologia_procedura text,
                                        nr_procedura INTEGER,
