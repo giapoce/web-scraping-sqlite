@@ -1,0 +1,7 @@
+csv
+bs4
+glob
+pandas
+requests
+urllib.parse
+sqlite3

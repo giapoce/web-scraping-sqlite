@@ -193,7 +193,8 @@ def create_table(conn, create_table_sql):
     except Error as e:
         print(e)
 
-if __name__ == '__main__':
+
+def main():
 
     # Parsing all html files
     res = glob.glob(html_files_glob)
@@ -233,3 +234,5 @@ if __name__ == '__main__':
     else:
         print("Error! cannot create the database connection.")
 
+if __name__ == '__main__':
+    main()
