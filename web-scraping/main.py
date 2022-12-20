@@ -93,13 +93,13 @@ def file_scrape(url):
                 # Let's do some cleansing
                 cleansed_lotto_header_field = " ".join(elem.get_text().strip().replace("\n", "").split())
                 lotto_csv_header.append(cleansed_lotto_header_field)
-            else:
 
+            elif elem.attrs['class'][0] == 'ubicazione':
                 # Paragraph with 'ubicazione' class is a field value, not a field name
-                if elem.attrs['class'][0] == 'ubicazione':
-                    # Let's do some cleansing
-                    cleansed_lotto_element = " ".join(elem.get_text().replace("\n", " ").split())
-                    lotto_data.append(cleansed_lotto_element)
+                
+                # Let's do some cleansing
+                cleansed_lotto_element = " ".join(elem.get_text().replace("\n", " ").split())
+                lotto_data.append(cleansed_lotto_element)
 
         else:
 
