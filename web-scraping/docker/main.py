@@ -5,14 +5,12 @@ import pandas as pd
 import os
 import requests
 import urllib.parse
-import sqlite3
-from sqlite3 import Error
+import psycopg2
 
 html_files_glob = r"data-source\*htm"
 csv_files_glob = r"csv-output\*csv"
-database = r"sqlite\db\pythonsqlite.db"
 
-sql_lite_table = """ CREATE TABLE IF NOT EXISTS procedura_lotto (
+sql_postgres_table = """ CREATE TABLE IF NOT EXISTS procedura_lotto (
                                        id integer PRIMARY KEY AUTOINCREMENT,
                                        lotto text NOT NULL,
                                        tipologia_procedura text,
@@ -26,8 +24,8 @@ sql_lite_table = """ CREATE TABLE IF NOT EXISTS procedura_lotto (
                                        genere TEXT,
                                        categoria TEXT,
                                        descrizione_sintetica TEXT,
-                                       latitudine FLOAT,
-                                       longitudine FLOAT
+                                       latitudine FLOAT8,
+                                       longitudine FLOAT8
                                    ); """
 
 
@@ -94,8 +92,8 @@ def file_scrape(url):
                 cleansed_lotto_header_field = " ".join(elem.get_text().strip().replace("\n", "").split())
                 lotto_csv_header.append(cleansed_lotto_header_field)
 
-            # Paragraph with 'ubicazione' class is a field value, not a field name
             elif elem.attrs['class'][0] == 'ubicazione':
+                # Paragraph with 'ubicazione' class is a field value, not a field name
                 
                 # Let's do some cleansing
                 cleansed_lotto_element = " ".join(elem.get_text().replace("\n", " ").split())
@@ -160,10 +158,9 @@ def retrieve_geo_coordinates(address):
     return [None,None]
 
 
-def create_connection(db_file):
-    """ create a database connection to the SQLite database
-           specified by db_file
-       :param db_file: database file
+def create_connection(**kwargs):
+    """ create a database connection to a postgres database
+       :param 
        :return: Connection object or None
     """
 
@@ -171,10 +168,14 @@ def create_connection(db_file):
     # and return the connection object
     conn = None
     try:
-        conn = sqlite3.connect(db_file)
+        conn = psycopg2.connect(host=kwargs["host"],database=kwargs["database"],user=kwargs["user"],password=kwargs["password"])
         return conn
-    except Error as e:
-        print(e)
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+           conn.close()
+           print('Database connection closed.')
 
     return conn
 
@@ -190,8 +191,17 @@ def create_table(conn, create_table_sql):
     try:
         c = conn.cursor()
         c.execute(create_table_sql)
-    except Error as e:
-        print(e)
+
+        cur.close()
+
+        # commit the changes
+        conn.commit()
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+           conn.close()
 
 
 def main():
@@ -219,20 +229,21 @@ def main():
     # Write concatenated Data Frame to a new csv file
     final_df.to_csv('csv-output\{}'.format("final.csv"),index=False, quoting=csv.QUOTE_ALL)
 
-    # Open connection to a sqlite database
-    conn = create_connection(database)
+    # Open connection to a postgres database
+    conn = create_connection(host="localhost",database="postgres",user="postgres",password=os.getenv("POSTGRES_PASSWORD"))
 
     # Create table and load data frame into it
     if conn is not None:
 
         # create table to store data
-        create_table(conn, sql_lite_table)
+        create_table(conn, sql_postgres_table)
 
         # Load data frame to the sqlite table
         final_df.to_sql("procedura_lotto", conn, if_exists='replace', index=False)
 
     else:
         print("Error! cannot create the database connection.")
+
 
 if __name__ == '__main__':
     main()
