@@ -36,8 +36,6 @@ services:
       - postgres_db
     networks:
       - app-tier
-    command: 
-      python3 main.py
 
 
 networks:

@@ -13,8 +13,12 @@ COPY main.py /app
 
 COPY data-source /app/data-source
 
+COPY run-script.sh /app
+
+RUN chmod +x /app/run-script.sh
+
 RUN mkdir /app/csv-output
 
 WORKDIR /app
 
-CMD ["tail -f /dev/null"]
+ENTRYPOINT ["/app/run-script.sh"]
