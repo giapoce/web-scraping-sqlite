@@ -242,7 +242,7 @@ def main():
     # Write concatenated Data Frame to a new csv file
     final_df.to_csv('csv-output/{}'.format("final.csv"),index=False, quoting=csv.QUOTE_ALL)
 
-    # Open connection to a postgres database
+    # Open connection to a postgres database week
     engine,conn = create_connection(host="postgres_db",database=os.getenv("POSTGRES_DB"),user=os.getenv("POSTGRES_USER"),password=os.getenv("POSTGRES_PASSWORD"))
 
     # Create table and load data frame into it
@@ -251,7 +251,7 @@ def main():
         # create table to store data
         create_table(conn, sql_postgres_table)
 
-        # Load data frame to the sqlite table
+        # Load data frame to the postgres table
         final_df.to_sql("procedura_lotto", engine, if_exists='replace', index=False)
 
     else:
