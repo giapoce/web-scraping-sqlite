@@ -69,13 +69,13 @@ def file_scrape(url):
                 cleansed_proc_header_field = " ".join(elem.get_text().strip().replace("\n", "").split())
                 proc_csv_header.append(cleansed_proc_header_field)
 
+        # Whatever else is a field value
         else:
-
-            # Whatever else is a field value
 
             # Let's do some cleansing
             cleansed_proc_element = " ".join(elem.get_text().replace("\n", " ").split())
             proc_data.append(cleansed_proc_element)
+
 
     # Finding "lotto" section in the html file
     lotto_card_tags = soup.find('h5', string='Dati generali del lotto')
@@ -95,20 +95,20 @@ def file_scrape(url):
                 cleansed_lotto_header_field = " ".join(elem.get_text().strip().replace("\n", "").split())
                 lotto_csv_header.append(cleansed_lotto_header_field)
 
+            # Paragraph with 'ubicazione' class is a field value, not a field name
             elif elem.attrs['class'][0] == 'ubicazione':
-                # Paragraph with 'ubicazione' class is a field value, not a field name
                 
                 # Let's do some cleansing
                 cleansed_lotto_element = " ".join(elem.get_text().replace("\n", " ").split())
                 lotto_data.append(cleansed_lotto_element)
 
+        # Whatever else is a field value
         else:
-
-            # Whatever else is a field value
 
             # Let's do some cleansing
             cleansed_lotto_element = " ".join(elem.get_text().replace("\n", " ").split())
             lotto_data.append(cleansed_lotto_element)
+
 
     # Combine headers and data from "procedura" and "lotto" sections
     header = proc_csv_header + lotto_csv_header
@@ -156,6 +156,7 @@ def retrieve_geo_coordinates(address):
     # Call nominatim api to retrieve latitude and longitude coordinates
     # corresponding to "address" parameter
     # The call may return nothing
+
     url = 'https://nominatim.openstreetmap.org/search/' + urllib.parse.quote(address) + '?format=json'
     response = requests.get(url).json()
 
@@ -175,6 +176,7 @@ def create_connection(**kwargs):
 
     # Open a connection to a local sqlite db whose file path is "db_file"
     # and return the connection object
+    
     conn = None
     try:
         engine = create_engine('postgresql+psycopg2://{}:{}@{}:5432/{}'.format(kwargs["user"],kwargs["password"],kwargs["host"],kwargs["database"]))
