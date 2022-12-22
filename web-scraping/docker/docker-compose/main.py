@@ -174,7 +174,7 @@ def create_connection(**kwargs):
        :return: Connection object or None
     """
 
-    # Open a connection to a local sqlite db whose file path is "db_file"
+    # Open a connection to a postgres db
     # and return the connection object
     
     conn = None
