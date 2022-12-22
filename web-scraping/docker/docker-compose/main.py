@@ -242,7 +242,7 @@ def main():
     # Write concatenated Data Frame to a new csv file
     final_df.to_csv('csv-output/{}'.format("final.csv"),index=False, quoting=csv.QUOTE_ALL)
 
-    # Open connection to a postgres database week
+    # Open connection to a postgres database
     engine,conn = create_connection(host="postgres_db",database=os.getenv("POSTGRES_DB"),user=os.getenv("POSTGRES_USER"),password=os.getenv("POSTGRES_PASSWORD"))
 
     # Create table and load data frame into it
