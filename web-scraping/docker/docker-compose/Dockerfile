@@ -1,7 +1,7 @@
 FROM alpine:latest
 
 RUN apk update && \
-    apk add --update --no-cache gcc g++ musl-dev python3 py3-pip libpq-dev libpq-dev python3-dev
+    apk add --update --no-cache gcc g++ musl-dev python3 py3-pip libpq-dev python3-dev
 
 COPY requirements.txt .
 
